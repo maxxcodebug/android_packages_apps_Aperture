@@ -251,4 +251,12 @@
     <string name="video_mirror_mode_off">Off</string>
     <string name="video_mirror_mode_on">On</string>
     <string name="video_mirror_mode_on_ffc_only">Front facing camera only</string>
+
+    <!-- About -->
+    <string name="about_header">About</string>
+    <string name="version_title">Version</string>
+    <string name="feedback_title">Send feedback</string>
+    <string name="feedback_summary">Report a bug or request a feature on GitHub</string>
+    <string name="source_code_title">Source code</string>
+    <string name="source_code_summary">View the project on GitHub</string>
 </resources>

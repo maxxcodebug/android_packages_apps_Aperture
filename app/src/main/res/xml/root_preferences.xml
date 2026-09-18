@@ -128,4 +128,29 @@
 
     </PreferenceCategory>
 
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/about_header">
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="version"
+            app:selectable="false"
+            app:title="@string/version_title" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="feedback"
+            app:summary="@string/feedback_summary"
+            app:title="@string/feedback_title" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="source_code"
+            app:summary="@string/source_code_summary"
+            app:title="@string/source_code_title" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

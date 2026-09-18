@@ -4,6 +4,9 @@
  */
 
 package org.lineageos.aperture
+import androidx.dynamicanimation.animation.DynamicAnimation
+import androidx.dynamicanimation.animation.SpringAnimation
+import androidx.dynamicanimation.animation.SpringForce
 
 import android.animation.ValueAnimator
 import android.app.KeyguardManager
@@ -515,6 +518,43 @@ open class CameraActivity : AppCompatActivity(R.layout.activity_camera) {
             viewModel.onVideoRecordingStateButtonPress()
         }
 
+        // MaxxSpring shutter feedback — SPDX-FileCopyrightText: 2026 Anshuman_X (maxxcodebug)
+        // Squash on press, bouncy pop on release. Custom spring combo, not a stock Android effect.
+        shutterButton.setOnTouchListener { view, event ->
+            when (event.actionMasked) {
+                android.view.MotionEvent.ACTION_DOWN -> {
+                    SpringAnimation(view, DynamicAnimation.SCALE_X, 0.82f).apply {
+                        spring = SpringForce(0.82f).apply {
+                            dampingRatio = SpringForce.DAMPING_RATIO_NO_BOUNCY
+                            stiffness = SpringForce.STIFFNESS_HIGH
+                        }
+                    }.start()
+                    SpringAnimation(view, DynamicAnimation.SCALE_Y, 0.82f).apply {
+                        spring = SpringForce(0.82f).apply {
+                            dampingRatio = SpringForce.DAMPING_RATIO_NO_BOUNCY
+                            stiffness = SpringForce.STIFFNESS_HIGH
+                        }
+                    }.start()
+                }
+
+                android.view.MotionEvent.ACTION_UP, android.view.MotionEvent.ACTION_CANCEL -> {
+                    SpringAnimation(view, DynamicAnimation.SCALE_X, 1f).apply {
+                        spring = SpringForce(1f).apply {
+                            dampingRatio = 0.35f
+                            stiffness = 550f
+                        }
+                    }.start()
+                    SpringAnimation(view, DynamicAnimation.SCALE_Y, 1f).apply {
+                        spring = SpringForce(1f).apply {
+                            dampingRatio = 0.35f
+                            stiffness = 550f
+                        }
+                    }.start()
+                }
+            }
+            false
+        }
+
         shutterButton.setOnClickListener {
             // Shutter animation
             when (viewModel.cameraMode.value) {
@@ -725,8 +765,8 @@ open class CameraActivity : AppCompatActivity(R.layout.activity_camera) {
                 micButton.isVisible = cameraMode == CameraMode.VIDEO
 
                 // Update secondary bottom bar buttons
-                proButton.isVisible = cameraMode != CameraMode.QR
-                googleLensButton.isVisible = cameraMode == CameraMode.QR && isGoogleLensAvailable
+                proButton.isVisible = cameraMode == CameraMode.VIDEO
+                googleLensButton.isVisible = (cameraMode == CameraMode.PHOTO || cameraMode == CameraMode.QR) && isGoogleLensAvailable
 
                 // Update primary bar buttons
                 shutterButton.isInvisible = cameraMode == CameraMode.QR

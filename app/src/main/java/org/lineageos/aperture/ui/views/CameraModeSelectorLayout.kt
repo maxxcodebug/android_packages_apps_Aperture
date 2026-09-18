@@ -1,11 +1,10 @@
 /*
- * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-FileCopyrightText: 2026 Anshuman_X (maxxcodebug)
  * SPDX-License-Identifier: Apache-2.0
  */
 
 package org.lineageos.aperture.ui.views
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -14,6 +13,10 @@ import android.widget.LinearLayout
 import androidx.core.view.doOnLayout
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.dynamicanimation.animation.DynamicAnimation
+import androidx.dynamicanimation.animation.FloatPropertyCompat
+import androidx.dynamicanimation.animation.SpringAnimation
+import androidx.dynamicanimation.animation.SpringForce
 import com.google.android.material.button.MaterialButton
 import org.lineageos.aperture.R
 import org.lineageos.aperture.ext.px
@@ -39,6 +42,16 @@ class CameraModeSelectorLayout @JvmOverloads constructor(
     private var cameraState = CameraState.IDLE
 
     var onModeSelectedCallback: (cameraMode: CameraMode) -> Unit = {}
+
+    // MaxxSpring: custom width property, no stock DynamicAnimation property covers view width
+    private val widthProperty = object : FloatPropertyCompat<MaterialButton>("highlightWidth") {
+        override fun getValue(button: MaterialButton) = button.width.toFloat()
+        override fun setValue(button: MaterialButton, value: Float) {
+            button.layoutParams = button.layoutParams.apply {
+                width = value.toInt().coerceAtLeast(1)
+            }
+        }
+    }
 
     init {
         inflate(context, R.layout.camera_mode_selector_layout, this)
@@ -71,23 +84,31 @@ class CameraModeSelectorLayout @JvmOverloads constructor(
             it.value.isEnabled = cameraMode != it.key
         }
 
-        // Animate camera mode change
+        // MaxxSpring transition: bouncy position + settled width + micro squash pop.
+        // Not a stock ValueAnimator interpolation — three springs layered together.
         doOnLayout {
-            // Animate position
-            ValueAnimator.ofFloat(
-                cameraModeHighlightButton.x, currentCameraModeButton.x + 16.px
-            ).apply {
-                addUpdateListener { valueAnimator ->
-                    cameraModeHighlightButton.x = valueAnimator.animatedValue as Float
+            val targetX = currentCameraModeButton.x + 16.px
+            val targetWidth = currentCameraModeButton.width.toFloat()
+
+            SpringAnimation(cameraModeHighlightButton, DynamicAnimation.X, targetX).apply {
+                spring = SpringForce(targetX).apply {
+                    dampingRatio = 0.55f
+                    stiffness = 700f
                 }
             }.start()
 
-            // Animate width
-            ValueAnimator.ofInt(
-                cameraModeHighlightButton.width, currentCameraModeButton.width
-            ).apply {
-                addUpdateListener { valueAnimator ->
-                    cameraModeHighlightButton.width = valueAnimator.animatedValue as Int
+            SpringAnimation(cameraModeHighlightButton, widthProperty, targetWidth).apply {
+                spring = SpringForce(targetWidth).apply {
+                    dampingRatio = SpringForce.DAMPING_RATIO_NO_BOUNCY
+                    stiffness = SpringForce.STIFFNESS_MEDIUM
+                }
+            }.start()
+
+            cameraModeHighlightButton.scaleY = 0.82f
+            SpringAnimation(cameraModeHighlightButton, DynamicAnimation.SCALE_Y, 1f).apply {
+                spring = SpringForce(1f).apply {
+                    dampingRatio = 0.35f
+                    stiffness = 900f
                 }
             }.start()
         }

@@ -76,6 +76,8 @@ dependencies {
     implementation(libs.androidx.camera.extensions)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
+    implementation("androidx.dynamicanimation:dynamicanimation-ktx:1.1.0")
+    implementation("androidx.dynamicanimation:dynamicanimation-ktx:1.1.0")
     implementation(libs.androidx.exifinterface)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.media3.exoplayer)

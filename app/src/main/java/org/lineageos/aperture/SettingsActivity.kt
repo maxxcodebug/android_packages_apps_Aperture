@@ -5,7 +5,9 @@
 
 package org.lineageos.aperture
 
+import android.content.Intent
 import android.hardware.input.InputManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyCharacterMap
@@ -210,6 +212,31 @@ class SettingsActivity : AppCompatActivity(R.layout.activity_settings) {
             // Photo capture mode
             photoCaptureMode.onPreferenceChangeListener = photoCaptureModePreferenceChangeListener
             enableZsl.isEnabled = photoCaptureMode.value == "minimize_latency"
+
+            // About - MaxxSpring additions: SPDX-FileCopyrightText: 2026 Anshuman_X (maxxcodebug)
+            findPreference<Preference>("version")?.summary = BuildConfig.VERSION_NAME
+
+            findPreference<Preference>("feedback")?.setOnPreferenceClickListener {
+                startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(
+                            "https://github.com/maxxcodebug/android_packages_apps_Aperture/issues/new"
+                        )
+                    )
+                )
+                true
+            }
+
+            findPreference<Preference>("source_code")?.setOnPreferenceClickListener {
+                startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/maxxcodebug/android_packages_apps_Aperture")
+                    )
+                )
+                true
+            }
         }
     }
 
