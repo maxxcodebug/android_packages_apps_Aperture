@@ -1,4 +1,5 @@
 /*
+ * SPDX-FileCopyrightText: The LineageOS Project
  * SPDX-FileCopyrightText: 2026 Anshuman_X (maxxcodebug)
  * SPDX-License-Identifier: Apache-2.0
  */
